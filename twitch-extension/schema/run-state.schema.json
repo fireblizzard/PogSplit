@@ -1,0 +1,253 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pogsplit.local/schema/run-state.v1.json",
+  "title": "PogSplit overlay message (v1)",
+  "description": "Messages PogSplit's bridge (EBS) sends to the Twitch overlay. All times are integer milliseconds in one timing method. A 'snapshot' carries the whole run; an 'update' carries what changed; 'offline' says PogSplit stopped. PubSub messages must stay under 5 KB (the bridge targets 4.5 KB); larger snapshots are served by the EBS at GET /v1/channels/{id}/state and GET /v1/runs/{run}, which the overlay calls with the Twitch JWT as Bearer.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/snapshot"
+    },
+    {
+      "$ref": "#/$defs/update"
+    },
+    {
+      "$ref": "#/$defs/offline"
+    }
+  ],
+  "$defs": {
+    "ms": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Milliseconds, or null when there is no time."
+    },
+    "timer": {
+      "type": "object",
+      "required": [
+        "phase",
+        "time"
+      ],
+      "properties": {
+        "phase": {
+          "enum": [
+            "NotRunning",
+            "Running",
+            "Paused",
+            "Ended"
+          ]
+        },
+        "time": {
+          "type": "integer",
+          "description": "Current timer value (for the active timing method) at the moment the message was sent. The overlay extrapolates from here while phase is Running."
+        },
+        "splitIndex": {
+          "type": "integer",
+          "description": "Index of the segment currently being run; -1 when not running, equals segment count when ended."
+        },
+        "at": {
+          "type": "integer",
+          "description": "EBS epoch ms at which 'time' was valid. The overlay extrapolates from it when it knows the EBS clock (HTTP Date header), else from receive time."
+        }
+      }
+    },
+    "segment": {
+      "type": "object",
+      "required": [
+        "name",
+        "best",
+        "cmp"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "best": {
+          "$ref": "#/$defs/ms",
+          "description": "Best segment (gold) duration."
+        },
+        "cmp": {
+          "type": "array",
+          "description": "Cumulative split time for each entry of 'comparisons', same order.",
+          "items": {
+            "$ref": "#/$defs/ms"
+          }
+        }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "required": [
+        "v",
+        "type",
+        "comparisons",
+        "segments",
+        "splits",
+        "timer"
+      ],
+      "properties": {
+        "v": {
+          "const": 1
+        },
+        "type": {
+          "const": "snapshot"
+        },
+        "game": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "attempts": {
+          "type": "integer"
+        },
+        "timingMethod": {
+          "enum": [
+            "RealTime",
+            "GameTime"
+          ]
+        },
+        "comparisons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Comparison names, e.g. Personal Best, Best Segments, Average Segments. The first one is the streamer's current comparison."
+        },
+        "segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/segment"
+          }
+        },
+        "splits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ms"
+          },
+          "description": "This attempt's cumulative split times. Length may be shorter than segments; null means skipped."
+        },
+        "timer": {
+          "$ref": "#/$defs/timer"
+        },
+        "seq": {
+          "type": "integer",
+          "description": "Monotonic per PogSplit session. A gap makes the overlay refetch /state."
+        },
+        "run": {
+          "type": "string",
+          "description": "Content hash of the run (segments, comparisons, golds). When an update's hash differs from the overlay's, it refetches the snapshot."
+        },
+        "fx": {
+          "type": "array",
+          "description": "Optional effects since the last message.",
+          "items": {
+            "type": "object",
+            "required": [
+              "k"
+            ],
+            "properties": {
+              "k": {
+                "enum": [
+                  "gold",
+                  "pb",
+                  "reset",
+                  "undo"
+                ]
+              },
+              "i": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "update": {
+      "type": "object",
+      "required": [
+        "v",
+        "type",
+        "timer"
+      ],
+      "properties": {
+        "v": {
+          "const": 1
+        },
+        "type": {
+          "const": "update"
+        },
+        "splits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ms"
+          },
+          "description": "Full replacement of this attempt's split times."
+        },
+        "best": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ms"
+          },
+          "description": "Full replacement of best segments, sent when a gold changes them."
+        },
+        "attempts": {
+          "type": "integer"
+        },
+        "timer": {
+          "$ref": "#/$defs/timer"
+        },
+        "seq": {
+          "type": "integer",
+          "description": "Monotonic per PogSplit session. A gap makes the overlay refetch /state."
+        },
+        "run": {
+          "type": "string",
+          "description": "Content hash of the run (segments, comparisons, golds). When an update's hash differs from the overlay's, it refetches the snapshot."
+        },
+        "fx": {
+          "type": "array",
+          "description": "Optional effects since the last message.",
+          "items": {
+            "type": "object",
+            "required": [
+              "k"
+            ],
+            "properties": {
+              "k": {
+                "enum": [
+                  "gold",
+                  "pb",
+                  "reset",
+                  "undo"
+                ]
+              },
+              "i": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "offline": {
+      "type": "object",
+      "required": [
+        "v",
+        "type"
+      ],
+      "properties": {
+        "v": {
+          "const": 1
+        },
+        "type": {
+          "const": "offline"
+        },
+        "seq": {
+          "type": "integer"
+        }
+      },
+      "description": "Sent by the EBS after 45 s without a heartbeat or when PogSplit closes."
+    }
+  }
+}

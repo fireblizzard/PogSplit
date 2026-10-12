@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PogSplit Overlay Harness</title>
+  <link rel="stylesheet" href="css/dev.css">
+</head>
+<body>
+  <main>
+    <h1>PogSplit overlay harness</h1>
+    <p class="hint">Local stand-in for the Twitch player. Not part of the extension upload.</p>
+
+    <div class="player">
+      <div class="fake-video" aria-hidden="true"><span>stream video</span></div>
+      <iframe id="overlay" title="Overlay"></iframe>
+      <div id="fake-controls" class="fake-controls" aria-hidden="true">▶ &nbsp; 🔊 &nbsp; LIVE</div>
+    </div>
+
+    <section class="tools">
+      <label>Mock speed
+        <select id="speed">
+          <option value="1">1×</option><option value="5">5×</option>
+          <option value="20" selected>20×</option><option value="60">60×</option>
+        </select>
+      </label>
+      <label><input id="controls" type="checkbox" checked> Player controls visible</label>
+      <label>Player width
+        <select id="width">
+          <option value="1280">1280</option><option value="960" selected>960</option><option value="640">640</option><option value="400">400</option>
+        </select>
+      </label>
+      <button id="reload" type="button">Reload overlay</button>
+    </section>
+
+    <section class="tools column">
+      <label for="json">Send a schema message as if from PogSplit (switches the overlay to live mode)</label>
+      <textarea id="json" rows="8" spellcheck="false"></textarea>
+      <div>
+        <button id="load-sample" type="button">Load sample snapshot</button>
+        <button id="send" type="button">Send</button>
+        <span id="send-status" class="hint"></span>
+      </div>
+    </section>
+  </main>
+  <script src="js/dev.js"></script>
+</body>
+</html>

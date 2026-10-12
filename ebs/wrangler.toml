@@ -1,0 +1,25 @@
+name = "pogsplit-ebs"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+# Your extension's Client ID (Twitch developer console, Extensions, your extension).
+EXTENSION_CLIENT_ID = "neyujzxdkzus9pucc247ze8qi8ii7o"
+# Your numeric Twitch user ID (the extension owner).
+OWNER_ID = "194814273"
+# Override only for local tests.
+TWITCH_API_BASE = "https://api.twitch.tv"
+
+# EXTENSION_SECRET is a secret: `npx wrangler secret put EXTENSION_SECRET` (the base64 secret from the console).
+
+[[durable_objects.bindings]]
+name = "CHANNEL"
+class_name = "ChannelState"
+
+[[durable_objects.bindings]]
+name = "PAIRING"
+class_name = "Pairing"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ChannelState", "Pairing"]

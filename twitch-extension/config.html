@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PogSplit Setup</title>
+  <link rel="stylesheet" href="css/config.css">
+  <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Connect PogSplit</h1>
+    <p>In PogSplit, choose <strong>Connect to Twitch</strong>. It shows a code like
+      <code>KJ4M-29QX</code>. Enter it here to send your splits to this extension.</p>
+
+    <form id="pair" class="pair" autocomplete="off">
+      <label for="code">Pairing code</label>
+      <div class="pair-row">
+        <input id="code" name="code" inputmode="text" maxlength="9" placeholder="XXXX-XXXX"
+               spellcheck="false" autocapitalize="characters" required>
+        <button id="connect" type="submit">Connect</button>
+      </div>
+    </form>
+
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+
+    <section class="disconnect">
+      <h2>Disconnect</h2>
+      <p>Stops every PogSplit connected to this channel from sending splits. You can pair again any time.</p>
+      <button id="disconnect" type="button" class="secondary">Disconnect PogSplit</button>
+    </section>
+  </main>
+  <script src="js/ebs.js"></script>
+  <script src="js/config.js"></script>
+</body>
+</html>

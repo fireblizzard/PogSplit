@@ -1,0 +1,13 @@
+/* No color-scheme here: a scheme that differs from the overlay iframe's makes Chrome paint the iframe opaque. */
+body { margin: 0; background: #0e0e10; color: #efeff1; font: 14px/1.4 system-ui, sans-serif; }
+main { max-width: 1320px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 18px; margin: 0 0 4px; }
+.hint { color: #a9a9b8; margin: 0 0 12px; font-size: 13px; }
+.player { position: relative; width: 960px; max-width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 6px; overflow: hidden; }
+.fake-video { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(circle at 30% 40%, #3a2a5a, #101018 70%); color: rgba(255,255,255,0.15); font-size: 32px; text-transform: uppercase; letter-spacing: 0.2em; }
+.player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; }
+.fake-controls { position: absolute; left: 0; right: 0; bottom: 0; height: 48px; padding: 0 16px; display: flex; align-items: center; background: linear-gradient(transparent, rgba(0,0,0,0.7)); pointer-events: none; transition: opacity 0.25s; }
+.tools { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 12px; }
+.tools.column { flex-direction: column; align-items: stretch; gap: 6px; }
+textarea { width: 100%; font: 12px/1.4 ui-monospace, monospace; background: #18181b; color: inherit; border: 1px solid #333; border-radius: 6px; padding: 8px; }
+button, select { font: inherit; }

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PogSplit Overlay</title>
+  <link rel="stylesheet" href="css/overlay.css">
+  <!-- Required by Twitch for every extension view; must be loaded from Twitch's CDN. -->
+  <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+</head>
+<body>
+  <div id="root" class="pos-tr">
+    <button id="launcher" class="launcher" type="button" aria-expanded="true" aria-controls="panel" title="Show or hide splits">
+      <span class="launcher-dot" aria-hidden="true"></span>
+      <span>Splits</span>
+    </button>
+
+    <section id="panel" class="panel" aria-label="Speedrun splits">
+      <header id="head" class="head" title="Drag to move">
+        <div class="title">
+          <div id="game" class="game">Waiting for PogSplit…</div>
+          <div id="category" class="category"></div>
+        </div>
+        <button id="gear" class="icon-btn" type="button" title="Overlay settings" aria-expanded="false" aria-controls="settings">⚙</button>
+        <button id="close" class="icon-btn" type="button" title="Hide splits">✕</button>
+      </header>
+
+      <nav id="tabs" class="tabs" aria-label="View" hidden>
+        <button type="button" class="tab" data-view="live" aria-pressed="true">Live</button>
+        <button type="button" class="tab" data-view="attempts" aria-pressed="false">Attempts</button>
+        <button type="button" class="tab" data-view="finished" aria-pressed="false">Finished</button>
+        <button type="button" class="tab" data-view="golds" aria-pressed="false">Golds</button>
+      </nav>
+
+      <div id="history" class="history" hidden></div>
+
+      <div id="cmp" class="cmp" role="group" aria-label="Comparison">
+        <button id="cmp-prev" class="icon-btn small" type="button" title="Previous comparison">‹</button>
+        <div id="cmp-name" class="cmp-name"></div>
+        <button id="cmp-next" class="icon-btn small" type="button" title="Next comparison">›</button>
+      </div>
+
+      <ol id="rows" class="rows"></ol>
+      <div id="timer" class="timer"></div>
+      <dl id="stats" class="stats"></dl>
+
+      <form id="settings" class="settings" hidden>
+        <fieldset>
+          <legend>Show</legend>
+          <label><input type="checkbox" data-key="showSplits"> Splits</label>
+          <label><input type="checkbox" data-key="showDeltas"> Deltas</label>
+          <label><input type="checkbox" data-key="showSegTimes"> Segment times</label>
+          <label><input type="checkbox" data-key="showTimer"> Timer</label>
+          <label><input type="checkbox" data-key="showPrevSeg"> Previous segment</label>
+          <label><input type="checkbox" data-key="showSoB"> Sum of best</label>
+          <label><input type="checkbox" data-key="showBPT"> Best possible time</label>
+          <label><input type="checkbox" data-key="showTimeSave"> Possible time save</label>
+          <label><input type="checkbox" data-key="showPredicted"> Predicted time</label>
+        </fieldset>
+        <fieldset class="row">
+          <label>Rows
+            <select data-key="rows">
+              <option value="5">5</option><option value="8">8</option>
+              <option value="12">12</option><option value="0">All</option>
+            </select>
+          </label>
+          <label>Position
+            <select data-key="position">
+              <option value="tl">Top left</option><option value="tr">Top right</option>
+              <option value="bl">Bottom left</option><option value="br">Bottom right</option>
+              <option value="custom" disabled>Dragged</option>
+            </select>
+          </label>
+          <label>Delta decimals
+            <select data-key="deltaDecimals">
+              <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            </select>
+          </label>
+        </fieldset>
+        <fieldset class="row">
+          <label>Time decimals
+            <select data-key="timeDecimals">
+              <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            </select>
+          </label>
+          <label class="span2">Size
+            <input type="range" data-key="scale" min="0.6" max="2.5" step="0.05">
+          </label>
+        </fieldset>
+        <p class="hint">Drag the title bar to move the splits, and the corner handle to resize them.</p>
+        <button id="reset-prefs" class="text-btn" type="button">Reset to defaults</button>
+      </form>
+
+      <footer id="source" class="source"></footer>
+      <div id="resize" class="resize" title="Drag to resize" aria-hidden="true"></div>
+    </section>
+  </div>
+
+  <script src="js/ebs.js"></script>
+  <script src="js/model.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/mock-feed.js"></script>
+  <script src="js/overlay.js"></script>
+</body>
+</html>

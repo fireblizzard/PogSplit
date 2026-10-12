@@ -1,0 +1,126 @@
+{
+  "v": 1,
+  "type": "snapshot",
+  "game": "Super Mario 64",
+  "category": "16 Star",
+  "attempts": 413,
+  "timingMethod": "RealTime",
+  "comparisons": [
+    "Personal Best",
+    "Best Segments",
+    "Average Segments"
+  ],
+  "segments": [
+    {
+      "name": "Bob-omb Battlefield",
+      "best": 66100,
+      "cmp": [
+        70400,
+        66100,
+        74900
+      ]
+    },
+    {
+      "name": "Whomp’s Fortress",
+      "best": 90300,
+      "cmp": [
+        165600,
+        156400,
+        176600
+      ]
+    },
+    {
+      "name": "Cool, Cool Mountain",
+      "best": 57200,
+      "cmp": [
+        226400,
+        213600,
+        241900
+      ]
+    },
+    {
+      "name": "Bowser in the Dark World",
+      "best": 104000,
+      "cmp": [
+        336900,
+        317600,
+        360100
+      ]
+    },
+    {
+      "name": "Lethal Lava Land",
+      "best": 80600,
+      "cmp": [
+        422000,
+        398200,
+        452500
+      ]
+    },
+    {
+      "name": "Shifting Sand Land",
+      "best": 70200,
+      "cmp": [
+        497900,
+        468400,
+        534500
+      ]
+    },
+    {
+      "name": "Hazy Maze Cave",
+      "best": 112800,
+      "cmp": [
+        618200,
+        581200,
+        665100
+      ]
+    },
+    {
+      "name": "Dire, Dire Docks",
+      "best": 61400,
+      "cmp": [
+        683200,
+        642600,
+        735200
+      ]
+    },
+    {
+      "name": "Bowser in the Fire Sea",
+      "best": 131500,
+      "cmp": [
+        823900,
+        774100,
+        887100
+      ]
+    },
+    {
+      "name": "BLJs",
+      "best": 22300,
+      "cmp": [
+        849500,
+        796400,
+        917500
+      ]
+    },
+    {
+      "name": "Bowser in the Sky",
+      "best": 138400,
+      "cmp": [
+        994700,
+        934800,
+        1074300
+      ]
+    }
+  ],
+  "splits": [
+    68288,
+    165891,
+    225922,
+    334503,
+    420774
+  ],
+  "timer": {
+    "phase": "Running",
+    "time": 451974,
+    "splitIndex": 5
+  }
+}

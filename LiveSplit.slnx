@@ -33,6 +33,7 @@
     <Project Path="components/LiveSplit.HotkeyIndicator/src/LiveSplit.HotkeyIndicator/LiveSplit.HotkeyIndicator.csproj" />
     <Project Path="components/LiveSplit.Racetime/src/LiveSplit.Racetime/LiveSplit.Racetime.csproj" />
     <Project Path="components/LiveSplit.TheRun/src/LiveSplit.TheRun/LiveSplit.TheRun.csproj" />
+    <Project Path="components/PogSplit.TwitchBridge/src/PogSplit.TwitchBridge/PogSplit.TwitchBridge.csproj" />
   </Folder>
   <Folder Name="/components/Timer/">
     <Project Path="components/LiveSplit.DetailedTimer/src/LiveSplit.DetailedTimer/LiveSplit.DetailedTimer.csproj" />
@@ -74,6 +75,7 @@
       <BuildDependency Project="components/LiveSplit.TotalPlaytime/src/LiveSplit.TotalPlaytime/LiveSplit.TotalPlaytime.csproj" />
       <BuildDependency Project="components/LiveSplit.Video/src/LiveSplit.Video/LiveSplit.Video.csproj" />
       <BuildDependency Project="components/LiveSplit.WorldRecord/src/LiveSplit.WorldRecord/LiveSplit.WorldRecord.csproj" />
+      <BuildDependency Project="components/PogSplit.TwitchBridge/src/PogSplit.TwitchBridge/PogSplit.TwitchBridge.csproj" />
       <BuildDependency Project="src/LiveSplit.Register/LiveSplit.Register.csproj" />
     </Project>
     <Project Path="src/UpdateManager/UpdateManager.csproj" />
