@@ -15,14 +15,15 @@ public class EffectsPreviewControl : Control
 {
     private static readonly string[] SplitNames = ["Black Mesa Inbound", "Anomalous Materials", "Unforeseen Consequences", "Office Complex"];
     private static readonly string[] SplitTimes = ["1:12.4", "4:31.0", "8:05.7", "11:42.3"];
-    private static readonly string[] Deltas = ["-0.8", "-3.4", "-2.9", "-4.1"];
+    private static readonly string[] Deltas = ["-0.8", "-3.4", "+1.6", "-0.4"];
     private const int GoldRow = 1;
+    private const int LosingRow = 2;
     private const string TimerText = "11:42.31";
 
     private readonly Options.LayoutSettings settings;
     private readonly EffectsManager effects;
     private readonly System.Windows.Forms.Timer frameTimer;
-    private bool lastWasPersonalBest;
+    private PreviewKind lastPlayed;
 
     public EffectsPreviewControl(Options.LayoutSettings settings)
     {
@@ -47,9 +48,20 @@ public class EffectsPreviewControl : Control
     /// </summary>
     public void PlayBestSegment()
     {
-        lastWasPersonalBest = false;
+        lastPlayed = PreviewKind.BestSegment;
         UpdateAnchors();
-        effects.PreviewBestSegment();
+        effects.PreviewBestSegment(GoldRow);
+        StartAnimating();
+    }
+
+    /// <summary>
+    /// Plays the losing time effects on the split that lost time.
+    /// </summary>
+    public void PlayLosingTime()
+    {
+        lastPlayed = PreviewKind.LosingTime;
+        UpdateAnchors();
+        effects.PreviewLosingTime(LosingRow);
         StartAnimating();
     }
 
@@ -58,7 +70,7 @@ public class EffectsPreviewControl : Control
     /// </summary>
     public void PlayPersonalBest()
     {
-        lastWasPersonalBest = true;
+        lastPlayed = PreviewKind.PersonalBest;
         UpdateAnchors();
         effects.PreviewPersonalBest();
         StartAnimating();
@@ -69,13 +81,17 @@ public class EffectsPreviewControl : Control
     /// </summary>
     public void Replay()
     {
-        if (lastWasPersonalBest)
+        switch (lastPlayed)
         {
-            PlayPersonalBest();
-        }
-        else
-        {
-            PlayBestSegment();
+            case PreviewKind.PersonalBest:
+                PlayPersonalBest();
+                break;
+            case PreviewKind.LosingTime:
+                PlayLosingTime();
+                break;
+            default:
+                PlayBestSegment();
+                break;
         }
     }
 
@@ -143,6 +159,7 @@ public class EffectsPreviewControl : Control
         using var textBrush = new SolidBrush(textColor);
         using var aheadBrush = new SolidBrush(Opaque(settings.AheadGainingTimeColor, Color.LimeGreen));
         using var goldBrush = new SolidBrush(Opaque(settings.BestSegmentColor, Color.Gold));
+        using var losingBrush = new SolidBrush(Opaque(settings.BehindLosingTimeColor, Color.Red));
         using var separator = new Pen(Color.FromArgb(40, textColor));
         using var centerLeft = new StringFormat { LineAlignment = StringAlignment.Center, Trimming = StringTrimming.EllipsisCharacter, FormatFlags = StringFormatFlags.NoWrap };
         using var centerRight = new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center, FormatFlags = StringFormatFlags.NoWrap };
@@ -156,7 +173,8 @@ public class EffectsPreviewControl : Control
             var deltaRect = RectangleF.FromLTRB(row.Right - timeWidth - deltaWidth, row.Top, row.Right - timeWidth, row.Bottom);
             var timeRect = RectangleF.FromLTRB(row.Right - timeWidth, row.Top, row.Right - 6f, row.Bottom);
             g.DrawString(SplitNames[i], nameFont, textBrush, nameRect, centerLeft);
-            g.DrawString(Deltas[i], timeFont, i == GoldRow ? goldBrush : aheadBrush, deltaRect, centerRight);
+            Brush deltaBrush = i == GoldRow ? goldBrush : i == LosingRow ? losingBrush : aheadBrush;
+            g.DrawString(Deltas[i], timeFont, deltaBrush, deltaRect, centerRight);
             g.DrawString(SplitTimes[i], timeFont, textBrush, timeRect, centerRight);
             g.DrawLine(separator, row.Left, row.Bottom, row.Right, row.Bottom);
         }
@@ -164,6 +182,13 @@ public class EffectsPreviewControl : Control
         RectangleF timer = TimerRect();
         using var timerFont = new Font(settings.TimerFont?.FontFamily ?? Font.FontFamily, Math.Max(10f, timer.Height * 0.75f), FontStyle.Bold, GraphicsUnit.Pixel);
         g.DrawString(TimerText, timerFont, aheadBrush, RectangleF.FromLTRB(timer.Left, timer.Top, timer.Right - 6f, timer.Bottom), centerRight);
+    }
+
+    private enum PreviewKind
+    {
+        BestSegment,
+        LosingTime,
+        PersonalBest
     }
 
     private static Color Opaque(Color color, Color fallback)

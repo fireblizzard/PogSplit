@@ -60,7 +60,10 @@ public class XMLLayoutSaver : ILayoutSaver
         SettingsHelper.CreateSetting(document, element, "EffectsAccentColor", settings.EffectsAccentColor) ^
         SettingsHelper.CreateSetting(document, element, "GoldStreak", settings.GoldStreak) ^
         SettingsHelper.CreateSetting(document, element, "ScreenShake", settings.ScreenShake) ^
-        SettingsHelper.CreateSetting(document, element, "ShakeStrength", settings.ShakeStrength);
+        SettingsHelper.CreateSetting(document, element, "ShakeStrength", settings.ShakeStrength) ^
+        SettingsHelper.CreateSetting(document, element, "LosingTimePulse", settings.LosingTimePulse) ^
+        SettingsHelper.CreateSetting(document, element, "LosingTimeThreshold", settings.LosingTimeThreshold) ^
+        SettingsHelper.CreateSetting(document, element, "LosingTimePulseDuration", settings.LosingTimePulseDuration);
     }
 
     public int CreateLayoutNode(XmlDocument document, XmlElement parent, ILayout layout)

@@ -182,6 +182,11 @@ public sealed class EffectsManager : IDisposable
             SpawnBestSegmentEffects(settings, splitIndex, LiveSplitStateHelper.GetBestSegmentColor(_state), GetTimeSave(splitIndex), GetGoldStreak(splitIndex));
         }
 
+        if (settings.LosingTimePulse && GetTimeLost(settings, splitIndex) is TimeSpan lost)
+        {
+            SpawnLosingTimeEffects(settings, splitIndex, lost);
+        }
+
         if (_state.CurrentPhase == TimerPhase.Ended && IsNewPersonalBest())
         {
             SpawnPersonalBestEffects(settings, splitIndex);
@@ -192,8 +197,9 @@ public sealed class EffectsManager : IDisposable
     /// Plays the best segment effects on a split row as if it had just been golded,
     /// saving 3.4 seconds as the third best segment in a row, so the settings can be previewed.
     /// </summary>
+    /// <param name="preferredSplitIndex">The split to play them on, or -1 for the last split done.</param>
     /// <returns>False if no split row is on screen to play them on.</returns>
-    public bool PreviewBestSegment()
+    public bool PreviewBestSegment(int preferredSplitIndex = -1)
     {
         LayoutSettings settings = _settings();
         if (settings == null || !settings.EffectsEnabled)
@@ -201,8 +207,7 @@ public sealed class EffectsManager : IDisposable
             return false;
         }
 
-        int preferred = _state != null ? Math.Max(_state.CurrentSplitIndex - 1, 0) : 0;
-        if (!Anchors.TryGetSplitRowNear(preferred, out int splitIndex))
+        if (!Anchors.TryGetSplitRowNear(GetPreviewSplitIndex(preferredSplitIndex), out int splitIndex))
         {
             return false;
         }
@@ -210,6 +215,39 @@ public sealed class EffectsManager : IDisposable
         StopAll();
         SpawnBestSegmentEffects(settings, splitIndex, settings.BestSegmentColor, TimeSpan.FromSeconds(3.4), 3);
         return true;
+    }
+
+    /// <summary>
+    /// Plays the losing time effects on a split row as if it had just lost twice the threshold, so the settings can be previewed.
+    /// </summary>
+    /// <param name="preferredSplitIndex">The split to play them on, or -1 for the last split done.</param>
+    /// <returns>False if no split row is on screen to play them on.</returns>
+    public bool PreviewLosingTime(int preferredSplitIndex = -1)
+    {
+        LayoutSettings settings = _settings();
+        if (settings == null || !settings.EffectsEnabled)
+        {
+            return false;
+        }
+
+        if (!Anchors.TryGetSplitRowNear(GetPreviewSplitIndex(preferredSplitIndex), out int splitIndex))
+        {
+            return false;
+        }
+
+        StopAll();
+        SpawnLosingTimeEffects(settings, splitIndex, TimeSpan.FromSeconds(Math.Max(0.1f, settings.LosingTimeThreshold) * 2f));
+        return true;
+    }
+
+    private int GetPreviewSplitIndex(int preferredSplitIndex)
+    {
+        if (preferredSplitIndex >= 0)
+        {
+            return preferredSplitIndex;
+        }
+
+        return _state != null ? Math.Max(_state.CurrentSplitIndex - 1, 0) : 0;
     }
 
     /// <summary>
@@ -251,6 +289,14 @@ public sealed class EffectsManager : IDisposable
             float streakBoost = 1f + (0.15f * Math.Min(Math.Max(streak - 1, 0), 4));
             Spawn(new ScreenShakeEffect(splitIndex, settings.ShakeStrength * 0.6f * streakBoost * intensity, 0.35));
         }
+    }
+
+    private void SpawnLosingTimeEffects(LayoutSettings settings, int splitIndex, TimeSpan lost)
+    {
+        // Losing three times the threshold or more pulses at full strength.
+        float threshold = Math.Max(0.1f, settings.LosingTimeThreshold);
+        float severity = (float)((lost.TotalSeconds - threshold) / (threshold * 2f));
+        Spawn(new LosingTimePulseEffect(splitIndex, settings.BehindLosingTimeColor, settings.EffectsStyle, settings.EffectsIntensity, settings.LosingTimePulseDuration, severity));
     }
 
     private void SpawnPersonalBestEffects(LayoutSettings settings, int splitIndex)
@@ -319,6 +365,18 @@ public sealed class EffectsManager : IDisposable
         }
 
         return bestSegment - segment;
+    }
+
+    // How much time the segment ending at splitIndex lost against the current comparison, or null if it lost less than the threshold.
+    private TimeSpan? GetTimeLost(LayoutSettings settings, int splitIndex)
+    {
+        TimeSpan? lost = LiveSplitStateHelper.GetPreviousSegmentDelta(_state, splitIndex, _state.CurrentComparison, _state.CurrentTimingMethod);
+        if (lost == null || lost.Value.TotalSeconds < Math.Max(0.1f, settings.LosingTimeThreshold))
+        {
+            return null;
+        }
+
+        return lost;
     }
 
     private bool IsNewPersonalBest()

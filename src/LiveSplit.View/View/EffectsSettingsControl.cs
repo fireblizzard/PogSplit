@@ -23,11 +23,13 @@ public class EffectsSettingsControl : UserControl
     private readonly CheckBox chkPbBurst;
     private readonly CheckBox chkGoldStreak;
     private readonly CheckBox chkScreenShake;
+    private readonly CheckBox chkLosingTimePulse;
     private readonly List<Control> effectControls = [];
     private readonly List<Control> goldFlashControls = [];
     private readonly List<Control> timeSaveControls = [];
     private readonly List<Control> pbBurstControls = [];
     private readonly List<Control> shakeControls = [];
+    private readonly List<Control> losingTimeControls = [];
     private readonly List<Control> accentControls = [];
 
     // Re-reads every control's value from the settings, after a style fills them in.
@@ -108,6 +110,19 @@ public class EffectsSettingsControl : UserControl
         chkGoldStreak.CheckedChanged += (sender, e) => Settings.GoldStreak = chkGoldStreak.Checked;
         refreshers.Add(() => chkGoldStreak.Checked = Settings.GoldStreak);
 
+        AddHeader("Losing Time");
+        chkLosingTimePulse = AddCheckBox("Pulse Split Red When Losing Time", 20);
+        chkLosingTimePulse.Checked = Settings.LosingTimePulse;
+        chkLosingTimePulse.CheckedChanged += (sender, e) =>
+        {
+            Settings.LosingTimePulse = chkLosingTimePulse.Checked;
+            UpdateEnabledState();
+        };
+        AddNumber(losingTimeControls, "Pulse When Losing:", "seconds or more", 0.1m, 600m, 1, 0.5m,
+            () => Settings.LosingTimeThreshold, value => Settings.LosingTimeThreshold = value);
+        AddNumber(losingTimeControls, "Pulse Duration:", "seconds", 0.1m, 5m, 2, 0.05m,
+            () => Settings.LosingTimePulseDuration, value => Settings.LosingTimePulseDuration = value);
+
         AddHeader("Screen Shake");
         chkScreenShake = AddCheckBox("Shake on Best Segment and Personal Best", 20);
         chkScreenShake.Checked = Settings.ScreenShake;
@@ -131,7 +146,7 @@ public class EffectsSettingsControl : UserControl
         AddNumber(pbBurstControls, "Burst Duration:", "seconds", 0.5m, 10m, 1, 0.1m,
             () => Settings.PbBurstDuration, value => Settings.PbBurstDuration = value);
 
-        effectControls.AddRange([chkGoldSplitFlash, chkGoldTimeSave, chkGoldStreak, chkScreenShake, chkPbBurst]);
+        effectControls.AddRange([chkGoldSplitFlash, chkGoldTimeSave, chkGoldStreak, chkLosingTimePulse, chkScreenShake, chkPbBurst]);
 
         Controls.Add(table);
         // This tab is taller than the dialog, so leave room for the vertical scrollbar instead of scrolling sideways.
@@ -181,10 +196,17 @@ public class EffectsSettingsControl : UserControl
             Margin = new Padding(0),
             WrapContents = false
         };
-        panel.Controls.Add(CreateButton("Play Best Segment", (sender, e) => preview.PlayBestSegment()));
-        panel.Controls.Add(CreateButton("Play Personal Best", (sender, e) => preview.PlayPersonalBest()));
+        panel.Controls.Add(new Label
+        {
+            Text = "Play:",
+            AutoSize = true,
+            Margin = new Padding(3, 8, 0, 3)
+        });
+        panel.Controls.Add(CreateButton("Best Segment", (sender, e) => preview.PlayBestSegment()));
+        panel.Controls.Add(CreateButton("Losing Time", (sender, e) => preview.PlayLosingTime()));
+        panel.Controls.Add(CreateButton("Personal Best", (sender, e) => preview.PlayPersonalBest()));
 
-        Button onTimer = CreateButton("Play on Timer...", (sender, e) => ShowTimerMenu((Control)sender));
+        Button onTimer = CreateButton("On Timer...", (sender, e) => ShowTimerMenu((Control)sender));
         onTimer.Enabled = timerEffects != null;
         panel.Controls.Add(onTimer);
 
@@ -218,6 +240,17 @@ public class EffectsSettingsControl : UserControl
             else if (!timerEffects.PreviewBestSegment())
             {
                 MessageBox.Show(this, "No splits are showing on the timer, so the best segment effects have nowhere to play. Add a Splits component to your layout to see them.", "Play on Timer", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        });
+        menu.Items.Add("Losing Time", null, (sender, e) =>
+        {
+            if (!Settings.EffectsEnabled)
+            {
+                MessageBox.Show(this, "Effects are turned off.", "Play on Timer", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (!timerEffects.PreviewLosingTime())
+            {
+                MessageBox.Show(this, "No splits are showing on the timer, so the losing time effects have nowhere to play. Add a Splits component to your layout to see them.", "Play on Timer", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         });
         menu.Items.Add("Personal Best", null, (sender, e) => timerEffects.PreviewPersonalBest());
@@ -469,6 +502,7 @@ public class EffectsSettingsControl : UserControl
         bool enabled = chkEffectsEnabled.Checked;
         SetEnabled(accentControls, enabled && Settings.EffectsStyle == EffectsStyle.Tech);
         SetEnabled(shakeControls, enabled && chkScreenShake.Checked);
+        SetEnabled(losingTimeControls, enabled && chkLosingTimePulse.Checked);
         SetEnabled(effectControls, enabled);
         SetEnabled(goldFlashControls, enabled && chkGoldSplitFlash.Checked);
         SetEnabled(timeSaveControls, enabled && chkGoldTimeSave.Checked);

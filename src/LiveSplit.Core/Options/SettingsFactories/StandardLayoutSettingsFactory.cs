@@ -59,7 +59,10 @@ public class StandardLayoutSettingsFactory : ILayoutSettingsFactory
             EffectsAccentColor = Color.FromArgb(0, 229, 255),
             GoldStreak = false,
             ScreenShake = false,
-            ShakeStrength = 6f
+            ShakeStrength = 6f,
+            LosingTimePulse = true,
+            LosingTimeThreshold = 3f,
+            LosingTimePulseDuration = 1f
         };
     }
 }

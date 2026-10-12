@@ -67,6 +67,12 @@ public class LayoutSettings : ICloneable
     // How far the window shakes, in pixels.
     public float ShakeStrength { get; set; }
 
+    public bool LosingTimePulse { get; set; }
+
+    // How much time a split has to lose against the comparison before it pulses, in seconds.
+    public float LosingTimeThreshold { get; set; }
+    public float LosingTimePulseDuration { get; set; }
+
     public object Clone()
     {
         var settings = new LayoutSettings();
@@ -126,5 +132,8 @@ public class LayoutSettings : ICloneable
         GoldStreak = settings.GoldStreak;
         ScreenShake = settings.ScreenShake;
         ShakeStrength = settings.ShakeStrength;
+        LosingTimePulse = settings.LosingTimePulse;
+        LosingTimeThreshold = settings.LosingTimeThreshold;
+        LosingTimePulseDuration = settings.LosingTimePulseDuration;
     }
 }
