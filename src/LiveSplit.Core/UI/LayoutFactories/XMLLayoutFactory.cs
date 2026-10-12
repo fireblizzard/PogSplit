@@ -40,6 +40,23 @@ public class XMLLayoutFactory : ILayoutFactory
             MousePassThroughWhileRunning = SettingsHelper.ParseBool(element["MousePassThroughWhileRunning"]),
             AllowResizing = SettingsHelper.ParseBool(element["AllowResizing"], true),
             AllowMoving = SettingsHelper.ParseBool(element["AllowMoving"], true),
+            EffectsEnabled = SettingsHelper.ParseBool(element["EffectsEnabled"], true),
+            GoldSplitFlash = SettingsHelper.ParseBool(element["GoldSplitFlash"], true),
+            GoldTimeSave = SettingsHelper.ParseBool(element["GoldTimeSave"], true),
+            PbBurst = SettingsHelper.ParseBool(element["PbBurst"], true),
+            EffectsIntensity = SettingsHelper.ParseFloat(element["EffectsIntensity"], 1f),
+            GoldFlashDuration = SettingsHelper.ParseFloat(element["GoldFlashDuration"], 0.75f),
+            TimeSaveDuration = SettingsHelper.ParseFloat(element["TimeSaveDuration"], 1f),
+            TimeSaveFadeStart = SettingsHelper.ParseFloat(element["TimeSaveFadeStart"], 0.55f),
+            TimeSaveRotation = SettingsHelper.ParseFloat(element["TimeSaveRotation"], 30f),
+            TimeSaveDrift = SettingsHelper.ParseFloat(element["TimeSaveDrift"], 0.9f),
+            TimeSaveTextSize = SettingsHelper.ParseFloat(element["TimeSaveTextSize"], 0.75f),
+            TimeSavePopScale = SettingsHelper.ParseFloat(element["TimeSavePopScale"], 1.25f),
+            PbBurstDuration = SettingsHelper.ParseFloat(element["PbBurstDuration"], 1.8f),
+            EffectsAccentColor = SettingsHelper.ParseColor(element["EffectsAccentColor"], Color.FromArgb(0, 229, 255)),
+            GoldStreak = SettingsHelper.ParseBool(element["GoldStreak"], false),
+            ScreenShake = SettingsHelper.ParseBool(element["ScreenShake"], false),
+            ShakeStrength = SettingsHelper.ParseFloat(element["ShakeStrength"], 6f),
             TextOutlineColor = SettingsHelper.ParseColor(element["TextOutlineColor"], Color.FromArgb(0, 0, 0, 0)),
             ShadowsColor = SettingsHelper.ParseColor(element["ShadowsColor"], Color.FromArgb(128, 0, 0, 0)),
             ShowBestSegments = SettingsHelper.ParseBool(element["ShowBestSegments"]),
@@ -69,6 +86,11 @@ public class XMLLayoutFactory : ILayoutFactory
             settings.TimesFont = SettingsHelper.GetFontFromElement(element["MainFont"]);
             settings.TextFont = SettingsHelper.GetFontFromElement(element["SplitNamesFont"]);
         }
+
+        SettingsHelper.TryParseEnum(element["EffectsStyle"], out EffectsStyle effectsStyle, EffectsStyle.Classic);
+        settings.EffectsStyle = effectsStyle;
+        SettingsHelper.TryParseEnum(element["TimeSaveRotationDirection"], out RotationDirection rotationDirection, RotationDirection.Clockwise);
+        settings.TimeSaveRotationDirection = rotationDirection;
 
         if (version >= new Version(1, 6, 1))
         {

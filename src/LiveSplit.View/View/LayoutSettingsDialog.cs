@@ -46,7 +46,7 @@ public partial class LayoutSettingsDialog : Form
         base.Dispose(disposing);
     }
 
-    public LayoutSettingsDialog(Options.LayoutSettings settings, UI.ILayout layout, IComponent tabComponent = null)
+    public LayoutSettingsDialog(Options.LayoutSettings settings, UI.ILayout layout, IComponent tabComponent = null, UI.Effects.EffectsManager timerEffects = null)
     {
         InitializeComponent();
         Settings = settings;
@@ -56,6 +56,7 @@ public partial class LayoutSettingsDialog : Form
         _fontOverrideSnapshots = [];
         _layoutComponents = [];
         AddNewTab("Layout", new LayoutSettingsControl(settings, layout));
+        AddNewTab("Effects", new EffectsSettingsControl(settings, timerEffects));
         AddComponents(tabComponent);
         UiLocalizer.Apply(this, LanguageResolver.ResolveCurrentCultureLanguage());
     }

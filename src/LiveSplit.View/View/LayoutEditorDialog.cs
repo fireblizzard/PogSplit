@@ -236,7 +236,7 @@ public partial class LayoutEditorDialog : Form
     private void ShowLayoutSettings(UI.Components.IComponent tabControl = null)
     {
         var oldSettings = (Options.LayoutSettings)Layout.Settings.Clone();
-        var settingsDialog = new LayoutSettingsDialog(Layout.Settings, Layout, tabControl);
+        var settingsDialog = new LayoutSettingsDialog(Layout.Settings, Layout, tabControl, CurrentState?.Effects);
         DialogResult result = settingsDialog.ShowDialog(this);
         //settingsDialog.Dispose();
         if (result == DialogResult.OK)

@@ -1,6 +1,7 @@
 ﻿using LiveSplit.Model.Input;
 using LiveSplit.Options;
 using LiveSplit.UI;
+using LiveSplit.UI.Effects;
 using System;
 using Forms = System.Windows.Forms;
 
@@ -13,6 +14,11 @@ public class LiveSplitState : ICloneable
     public LayoutSettings LayoutSettings { get; set; }
     public ISettings Settings { get; set; }
     public Forms.Form Form { get; set; }
+
+    /// <summary>
+    /// Draws effects such as gold split flashes on top of the layout. Null on cloned states.
+    /// </summary>
+    public EffectsManager Effects { get; set; }
 
     public AtomicDateTime AttemptStarted { get; set; }
     public AtomicDateTime AttemptEnded { get; set; }

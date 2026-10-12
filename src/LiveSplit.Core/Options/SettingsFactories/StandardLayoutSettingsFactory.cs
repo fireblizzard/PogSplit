@@ -40,7 +40,26 @@ public class StandardLayoutSettingsFactory : ILayoutSettingsFactory
             Opacity = 1,
             MousePassThroughWhileRunning = false,
             AllowResizing = true,
-            AllowMoving = true
+            AllowMoving = true,
+            EffectsEnabled = true,
+            GoldSplitFlash = true,
+            GoldTimeSave = true,
+            PbBurst = true,
+            EffectsIntensity = 1f,
+            GoldFlashDuration = 0.75f,
+            TimeSaveDuration = 1f,
+            TimeSaveFadeStart = 0.55f,
+            TimeSaveRotation = 30f,
+            TimeSaveRotationDirection = RotationDirection.Clockwise,
+            TimeSaveDrift = 0.9f,
+            TimeSaveTextSize = 0.75f,
+            TimeSavePopScale = 1.25f,
+            PbBurstDuration = 1.8f,
+            EffectsStyle = EffectsStyle.Classic,
+            EffectsAccentColor = Color.FromArgb(0, 229, 255),
+            GoldStreak = false,
+            ScreenShake = false,
+            ShakeStrength = 6f
         };
     }
 }

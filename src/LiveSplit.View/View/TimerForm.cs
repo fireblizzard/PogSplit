@@ -12,6 +12,7 @@ using LiveSplit.Server;
 using LiveSplit.TimeFormatters;
 using LiveSplit.UI;
 using LiveSplit.UI.Components;
+using LiveSplit.UI.Effects;
 using LiveSplit.UI.LayoutFactories;
 using LiveSplit.UI.LayoutSavers;
 using LiveSplit.Updates;
@@ -58,6 +59,8 @@ public partial class TimerForm : Form
     protected int RefreshesRemaining { get; set; }
     public ISettings Settings { get; set; }
     protected Invalidator Invalidator { get; set; }
+    protected EffectsManager Effects { get; set; }
+    private bool highResolutionTimerActive;
     protected bool InTimerOnlyMode { get; set; }
 
     private Image previousBackground { get; set; }
@@ -179,6 +182,12 @@ public partial class TimerForm : Form
     [DllImport("user32.dll")]
     private static extern IntPtr GetForegroundWindow();
 
+    [DllImport("winmm.dll")]
+    private static extern uint timeBeginPeriod(uint uPeriod);
+
+    [DllImport("winmm.dll")]
+    private static extern uint timeEndPeriod(uint uPeriod);
+
     public TimerForm(string splitsPath = null, string layoutPath = null, string basePath = "")
     {
         BasePath = basePath;
@@ -201,6 +210,8 @@ public partial class TimerForm : Form
         ComponentManager.BasePath = BasePath;
 
         CurrentState = new LiveSplitState(null, this, null, null, null);
+        Effects = new EffectsManager(CurrentState);
+        CurrentState.Effects = Effects;
 
         ComparisonGeneratorsFactory = new StandardComparisonGeneratorsFactory();
 
@@ -1361,7 +1372,7 @@ public partial class TimerForm : Form
     {
         while (true)
         {
-            Thread.Sleep(1000 / Settings.RefreshRate);
+            Thread.Sleep(GetRefreshInterval());
             try
             {
                 TimerElapsed();
@@ -1390,6 +1401,8 @@ public partial class TimerForm : Form
                         return;
                     }
 
+                    Rectangle effectsDirty = Effects.Tick();
+
                     if (RefreshesRemaining > 0 || InvalidationRequired)
                     {
                         InvalidateForm();
@@ -1400,8 +1413,13 @@ public partial class TimerForm : Form
                     }
                     else
                     {
+                        // Serializing the whole layout every tick is expensive, so skip the
+                        // layout change check while effects are playing; it resumes right after.
                         GlobalCache.Restart();
-                        GlobalCache["LayoutHashCode"] = new XMLLayoutSaver().CreateLayoutNode(null, null, Layout);
+                        if (!Effects.HasActiveEffects)
+                        {
+                            GlobalCache["LayoutHashCode"] = new XMLLayoutSaver().CreateLayoutNode(null, null, Layout);
+                        }
 
                         if (GlobalCache.HasChanged)
                         {
@@ -1425,6 +1443,11 @@ public partial class TimerForm : Form
                             });
                         }
                     }
+
+                    if (!effectsDirty.IsEmpty)
+                    {
+                        Invalidate(effectsDirty);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1438,6 +1461,31 @@ public partial class TimerForm : Form
             Log.Error(ex);
             Invalidate();
         }
+    }
+
+    private int GetRefreshInterval()
+    {
+        int interval = 1000 / Settings.RefreshRate;
+        bool effectsPlaying = Effects.HasActiveEffects;
+
+        // Thread.Sleep only wakes every ~15.6 ms by default, which makes animations stutter.
+        // Raise the system timer resolution while effects play and restore it right after.
+        if (effectsPlaying != highResolutionTimerActive)
+        {
+            if (effectsPlaying)
+            {
+                timeBeginPeriod(1);
+            }
+            else
+            {
+                timeEndPeriod(1);
+            }
+
+            highResolutionTimerActive = effectsPlaying;
+        }
+
+        // Effects animate at up to 60 frames per second.
+        return effectsPlaying ? Math.Min(interval, 16) : interval;
     }
 
     private void FixSize()
@@ -1546,8 +1594,11 @@ public partial class TimerForm : Form
             ? Height / ComponentRenderer.OverallSize
             : Width / ComponentRenderer.OverallSize;
 
+        // Screen shake effects move the whole layout for a moment.
+        PointF shake = Effects.GetShakeOffset();
+
         g.ResetTransform();
-        g.TranslateTransform(-0.5f, -0.5f);
+        g.TranslateTransform(-0.5f + shake.X, -0.5f + shake.Y);
         g.ScaleTransform(scaleFactor, scaleFactor);
         float transformedWidth = Width;
         float transformedHeight = Height;
@@ -1562,6 +1613,8 @@ public partial class TimerForm : Form
         }
 
         ComponentRenderer.Render(g, CurrentState, transformedWidth, transformedHeight, Layout.Mode, UpdateRegion);
+        Effects.Anchors.Set(EffectAnchors.Window, new RectangleF(0, 0, Width, Height));
+        Effects.Draw(g);
 
         FixSize();
         KeepLayoutSize();

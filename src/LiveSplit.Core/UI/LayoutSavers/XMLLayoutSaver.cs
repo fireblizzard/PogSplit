@@ -41,7 +41,26 @@ public class XMLLayoutSaver : ILayoutSaver
         SettingsHelper.CreateSetting(document, element, "Opacity", settings.Opacity) ^
         SettingsHelper.CreateSetting(document, element, "MousePassThroughWhileRunning", settings.MousePassThroughWhileRunning) ^
         SettingsHelper.CreateSetting(document, element, "AllowResizing", settings.AllowResizing) ^
-        SettingsHelper.CreateSetting(document, element, "AllowMoving", settings.AllowMoving);
+        SettingsHelper.CreateSetting(document, element, "AllowMoving", settings.AllowMoving) ^
+        SettingsHelper.CreateSetting(document, element, "EffectsEnabled", settings.EffectsEnabled) ^
+        SettingsHelper.CreateSetting(document, element, "GoldSplitFlash", settings.GoldSplitFlash) ^
+        SettingsHelper.CreateSetting(document, element, "GoldTimeSave", settings.GoldTimeSave) ^
+        SettingsHelper.CreateSetting(document, element, "PbBurst", settings.PbBurst) ^
+        SettingsHelper.CreateSetting(document, element, "EffectsIntensity", settings.EffectsIntensity) ^
+        SettingsHelper.CreateSetting(document, element, "GoldFlashDuration", settings.GoldFlashDuration) ^
+        SettingsHelper.CreateSetting(document, element, "TimeSaveDuration", settings.TimeSaveDuration) ^
+        SettingsHelper.CreateSetting(document, element, "TimeSaveFadeStart", settings.TimeSaveFadeStart) ^
+        SettingsHelper.CreateSetting(document, element, "TimeSaveRotation", settings.TimeSaveRotation) ^
+        SettingsHelper.CreateSetting(document, element, "TimeSaveRotationDirection", settings.TimeSaveRotationDirection) ^
+        SettingsHelper.CreateSetting(document, element, "TimeSaveDrift", settings.TimeSaveDrift) ^
+        SettingsHelper.CreateSetting(document, element, "TimeSaveTextSize", settings.TimeSaveTextSize) ^
+        SettingsHelper.CreateSetting(document, element, "TimeSavePopScale", settings.TimeSavePopScale) ^
+        SettingsHelper.CreateSetting(document, element, "PbBurstDuration", settings.PbBurstDuration) ^
+        SettingsHelper.CreateSetting(document, element, "EffectsStyle", settings.EffectsStyle) ^
+        SettingsHelper.CreateSetting(document, element, "EffectsAccentColor", settings.EffectsAccentColor) ^
+        SettingsHelper.CreateSetting(document, element, "GoldStreak", settings.GoldStreak) ^
+        SettingsHelper.CreateSetting(document, element, "ScreenShake", settings.ScreenShake) ^
+        SettingsHelper.CreateSetting(document, element, "ShakeStrength", settings.ShakeStrength);
     }
 
     public int CreateLayoutNode(XmlDocument document, XmlElement parent, ILayout layout)

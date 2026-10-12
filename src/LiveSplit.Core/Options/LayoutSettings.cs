@@ -42,6 +42,31 @@ public class LayoutSettings : ICloneable
     public bool AllowResizing { get; set; }
     public bool AllowMoving { get; set; }
 
+    public bool EffectsEnabled { get; set; }
+    public bool GoldSplitFlash { get; set; }
+    public bool GoldTimeSave { get; set; }
+    public bool PbBurst { get; set; }
+    public float EffectsIntensity { get; set; }
+
+    // Effect tuning. Durations are in seconds, rotation in degrees, the rest are fractions (0.55 = 55%).
+    public float GoldFlashDuration { get; set; }
+    public float TimeSaveDuration { get; set; }
+    public float TimeSaveFadeStart { get; set; }
+    public float TimeSaveRotation { get; set; }
+    public RotationDirection TimeSaveRotationDirection { get; set; }
+    public float TimeSaveDrift { get; set; }
+    public float TimeSaveTextSize { get; set; }
+    public float TimeSavePopScale { get; set; }
+    public float PbBurstDuration { get; set; }
+
+    public EffectsStyle EffectsStyle { get; set; }
+    public Color EffectsAccentColor { get; set; }
+    public bool GoldStreak { get; set; }
+    public bool ScreenShake { get; set; }
+
+    // How far the window shakes, in pixels.
+    public float ShakeStrength { get; set; }
+
     public object Clone()
     {
         var settings = new LayoutSettings();
@@ -82,5 +107,24 @@ public class LayoutSettings : ICloneable
         ImageBlur = settings.ImageBlur;
         AllowResizing = settings.AllowResizing;
         AllowMoving = settings.AllowMoving;
+        EffectsEnabled = settings.EffectsEnabled;
+        GoldSplitFlash = settings.GoldSplitFlash;
+        GoldTimeSave = settings.GoldTimeSave;
+        PbBurst = settings.PbBurst;
+        EffectsIntensity = settings.EffectsIntensity;
+        GoldFlashDuration = settings.GoldFlashDuration;
+        TimeSaveDuration = settings.TimeSaveDuration;
+        TimeSaveFadeStart = settings.TimeSaveFadeStart;
+        TimeSaveRotation = settings.TimeSaveRotation;
+        TimeSaveRotationDirection = settings.TimeSaveRotationDirection;
+        TimeSaveDrift = settings.TimeSaveDrift;
+        TimeSaveTextSize = settings.TimeSaveTextSize;
+        TimeSavePopScale = settings.TimeSavePopScale;
+        PbBurstDuration = settings.PbBurstDuration;
+        EffectsStyle = settings.EffectsStyle;
+        EffectsAccentColor = settings.EffectsAccentColor;
+        GoldStreak = settings.GoldStreak;
+        ScreenShake = settings.ScreenShake;
+        ShakeStrength = settings.ShakeStrength;
     }
 }
