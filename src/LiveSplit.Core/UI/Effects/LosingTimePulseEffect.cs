@@ -53,7 +53,7 @@ public class LosingTimePulseEffect : Effect
         switch (_style)
         {
             case EffectsStyle.Chaotic:
-                DrawPulses(g, row, 3, 170f, 255f, 2.5f, true);
+                DrawPulses(g, row, 3, 170f, 255f, 1.5f, true);
                 break;
             case EffectsStyle.Chill:
                 DrawChill(g, row);
@@ -62,7 +62,7 @@ public class LosingTimePulseEffect : Effect
                 DrawTech(g, row);
                 break;
             default:
-                DrawPulses(g, row, 2, 110f, 220f, 1.5f, false);
+                DrawPulses(g, row, 2, 110f, 220f, 1f, false);
                 break;
         }
     }
@@ -132,7 +132,7 @@ public class LosingTimePulseEffect : Effect
             }
         }
 
-        using var pen = new Pen(Color.FromArgb(ClampAlpha(255f * fadeOut * _strength), _color), 2f);
+        using var pen = new Pen(Color.FromArgb(ClampAlpha(255f * fadeOut * _strength), _color), 1.5f);
         DrawCornerBrackets(g, pen, RectangleF.Inflate(row, 2f, 2f), Math.Max(4f, row.Height * 0.45f));
     }
 }

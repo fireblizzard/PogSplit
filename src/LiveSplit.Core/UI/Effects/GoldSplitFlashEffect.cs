@@ -92,8 +92,8 @@ public class GoldSplitFlashEffect : Effect
             DrawSweep(g, row, EaseOutCubic(sweep), 0.35f, 170f, _color);
         }
 
-        using var border = new Pen(Color.FromArgb(ClampAlpha(220f * fade * _intensity), _color), 1.5f);
-        g.DrawRectangle(border, row.X + 0.75f, row.Y + 0.75f, row.Width - 1.5f, row.Height - 1.5f);
+        using var border = new Pen(Color.FromArgb(ClampAlpha(220f * fade * _intensity), _color), 1f);
+        g.DrawRectangle(border, row.X + 0.5f, row.Y + 0.5f, row.Width - 1f, row.Height - 1f);
     }
 
     // Three hard strobes, a white-hot double sweep and a border that blasts outward.
@@ -116,9 +116,9 @@ public class GoldSplitFlashEffect : Effect
             DrawSweep(g, row, 1f - EaseOutCubic(sweep), 0.25f, 200f, _color);
         }
 
-        using (var border = new Pen(Color.FromArgb(ClampAlpha(255f * fade * _intensity), hot), 2.5f))
+        using (var border = new Pen(Color.FromArgb(ClampAlpha(255f * fade * _intensity), hot), 1.5f))
         {
-            g.DrawRectangle(border, row.X + 1.25f, row.Y + 1.25f, row.Width - 2.5f, row.Height - 2.5f);
+            g.DrawRectangle(border, row.X + 0.75f, row.Y + 0.75f, row.Width - 1.5f, row.Height - 1.5f);
         }
 
         // A shockwave border that flies outward and thins out.
@@ -127,7 +127,7 @@ public class GoldSplitFlashEffect : Effect
         {
             float reach = ShockwaveReach(row) * EaseOutCubic(wave);
             RectangleF shock = RectangleF.Inflate(row, reach, reach);
-            using var pen = new Pen(Color.FromArgb(ClampAlpha(230f * (1f - wave) * _intensity), _color), Math.Max(1f, 4f * (1f - wave)));
+            using var pen = new Pen(Color.FromArgb(ClampAlpha(230f * (1f - wave) * _intensity), _color), Math.Max(1f, 2.5f * (1f - wave)));
             g.DrawRectangle(pen, shock.X, shock.Y, shock.Width, shock.Height);
         }
     }
@@ -194,7 +194,7 @@ public class GoldSplitFlashEffect : Effect
         if (scan < 1f)
         {
             DrawSweep(g, row, scan, 0.18f, 160f, _accent);
-            using var beam = new Pen(Color.FromArgb(ClampAlpha(255f * _intensity), Blend(_accent, Color.White, 0.6f)), 2f);
+            using var beam = new Pen(Color.FromArgb(ClampAlpha(255f * _intensity), Blend(_accent, Color.White, 0.6f)), 1.5f);
             g.DrawLine(beam, scannedRight, row.Top, scannedRight, row.Bottom);
         }
 
@@ -206,7 +206,7 @@ public class GoldSplitFlashEffect : Effect
         if (!blinkOff)
         {
             float bracketAlpha = (lockIn < 1f ? 0.4f + (0.6f * lockIn) : 1f) * fadeOut;
-            using var pen = new Pen(Color.FromArgb(ClampAlpha(255f * bracketAlpha * _intensity), _accent), 2f);
+            using var pen = new Pen(Color.FromArgb(ClampAlpha(255f * bracketAlpha * _intensity), _accent), 1.5f);
             DrawCornerBrackets(g, pen, target, Math.Max(4f, row.Height * 0.45f));
         }
     }
